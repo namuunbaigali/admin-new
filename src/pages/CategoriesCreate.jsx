@@ -1,26 +1,23 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { Alert, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import { useToast } from "../hooks/useToast";
 
-export default function BasicTextFields({ afterSubmit }) {
+export default function BasicTextFields() {
   const [name, setName] = React.useState("");
 
   const submit = () => {
     axios
-      .post("http://localhost:3000/categories", { name })
+      .post("http://localhost:8000/categories", { name })
       .then((res) => {
-        <Alert severity="success">
-          This is a success alert — check it out!
-        </Alert>;
-        afterSubmit(res.data);
+        useToast.success("Амжилттай нэмэгдлээ");
       })
       .catch((err) => {
         console.log(err);
-        <Alert severity="error">This is a success alert — check it out!</Alert>;
       });
   };
 
@@ -39,6 +36,9 @@ export default function BasicTextFields({ afterSubmit }) {
         id="standard-basic"
         label="First name"
         variant="standard"
+        onChange={(e) => {
+          setName(e.target.value);
+        }}
       />
 
       <Stack spacing={2} direction="row">
@@ -46,7 +46,6 @@ export default function BasicTextFields({ afterSubmit }) {
           size="small"
           variant="contained"
           onClick={(e) => {
-            e.preventDefault();
             submit();
           }}
         >

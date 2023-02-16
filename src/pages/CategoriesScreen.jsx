@@ -7,33 +7,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const columns = [
-  { field: "id", headerName: "#", width: 50 },
-  { field: "name", headerName: "Name", flex: 1 },
-  {
-    field: "",
-    headerName: "Actions",
-    width: 100,
-    sortable: false,
-    filterable: false,
-    headerAlign: "center",
-    renderCell: (params) => (
-      <Stack sx={{ flexDirection: "row" }}>
-        <Tooltip title="Edit">
-          <IconButton aria-label="edit" color="primary">
-            <Edit fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete" color="secondary">
-            <Delete fontSize="inherit" />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-    ),
-  },
-];
-
 const breadCrumbs = [
   {
     label: "",
@@ -45,15 +18,60 @@ const breadCrumbs = [
   },
 ];
 
-export const CategoriesScreen = () => {
+export const CategoriesScreen = ({ item }) => {
   const [categories, setCategories] = useState([]);
   const [pageSize, setPageSize] = useState(10);
+
+  const [deleted, setDeleted] = useState(false);
+
+  const deleteItem = () => {
+    axios
+      .delete("http://localhost:8000/categories" + item.id)
+      .then(() => {
+        showToast();
+        setDeleted(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     axios.get("http://localhost:8000/categories").then((res) => {
       setCategories(res.data);
     });
   }, []);
+  const columns = [
+    { field: "id", headerName: "#", width: 50 },
+    { field: "name", headerName: "Name", flex: 1 },
+    {
+      field: "",
+      headerName: "Actions",
+      width: 100,
+      sortable: false,
+      filterable: false,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Stack sx={{ flexDirection: "row" }}>
+          <Tooltip title="Edit">
+            <IconButton aria-label="edit" color="primary">
+              <Edit fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton aria-label="delete" color="secondary">
+              <Delete
+                fontSize="inherit"
+                onClick={(e) => {
+                  deleteItem();
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -72,7 +90,9 @@ export const CategoriesScreen = () => {
         </Typography>
         <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Link to={"new"}>
-            <Button variant="contained">New</Button>
+            <Button underline="none" variant="contained">
+              New
+            </Button>
           </Link>
           <Button variant="contained">Filter</Button>
         </Stack>
