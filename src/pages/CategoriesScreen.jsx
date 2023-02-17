@@ -6,6 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useToast } from "../hooks/useToast";
 
 const breadCrumbs = [
   {
@@ -28,7 +29,7 @@ export const CategoriesScreen = ({ item }) => {
     axios
       .delete("http://localhost:8000/categories" + item.id)
       .then(() => {
-        showToast();
+        <useToast />;
         setDeleted(true);
       })
       .catch((err) => {
